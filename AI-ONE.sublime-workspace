@@ -1,0 +1,280 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ii",
+				"ii"
+			],
+			[
+				"add",
+				"add_edge"
+			],
+			[
+				"p",
+				"pBoard"
+			],
+			[
+				"m",
+				"mBoard"
+			],
+			[
+				"se",
+				"searchGraph"
+			],
+			[
+				"ham",
+				"hamDistance"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "__main__.py",
+			"settings":
+			{
+				"buffer_size": 132,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "\nfrom  collections import deque\nimport networkx as nx\nimport numpy as np \nfrom random import randint\n\nclass Board():\n\tdef __init__(self,matrix=None):\n\t\tself.goal = np.zeros((2,3))\n\t\tself.goal[0,0] = 0\n\t\tself.goal[0,1] = 1\n\t\tself.goal[0,2] = 2\n\t\tself.goal[1,0] = 3\n\t\tself.goal[1,1] = 4\n\t\tself.goal[1,2] = 5\n\t\tif matrix is None:\n\t\t\tself.matrix = np.zeros((2,3))\n\t\t\tself.matrix[0,0] = 5\n\t\t\tself.matrix[0,1] = 1\n\t\t\tself.matrix[0,2] = 0\n\t\t\tself.matrix[1,0] = 4\n\t\t\tself.matrix[1,1] = 3\n\t\t\tself.matrix[1,2] = 2\n\t\telse:\n\t\t\tself.matrix = matrix\n\n\tdef __str__(self):\n\t\treturn np.array_str(self.matrix)\n\n\tdef getMatrix(self):\n\t\treturn self.matrix\n\tdef getGoal(self):\n\t\treturn self.goal\n\n\tdef hamming(self):\n\t\tself.hamming = 0\n\t\tfor i in range(1,2):\n\t\t\tfor j in range(1,3):\n\t\t\t\t\tif self.matrix[i,j] != self.goal[i,j]:\n\t\t\t\t\t\tself.hamming += 1\n\t\treturn self.hamDistance\n\n\tdef manhattan(self):\n\t\tself.manDistance = 0\n\t\tfor i in range(1,2):\n\t\t\tfor j in range(1,3):\n\t\t\t\t\tif self.matrix[i,j] != self.goal[i,j]:\n\t\t\t\t\t\tself.manDistance += i+j\n\t\treturn self.manDistance \n\n\n\ndef solveBFS(board):\n\tvisited = set()\n\tsearchGraph = nx.Graph() \n\tpQueue = deque() #use append and pop for FIFO\n\tpQueue.append(board)\n\twhile pQueue:\n\t\tvertex = pQueue.pop(0)\n\t\tv = vertex.getMatrix()\n\t\tif vertex not in visited: #comparison doesn't work\n\t\t\tvisited.add(vertex)\n\t\t\tfree = np.where(v==0)\n\t\t\tii = free[0]\n\t\t\tjj = free[1]\n\t\t\ti = ii.item(0)\n\t\t\tj = jj.item(0)\n\t\t\t#generate next nodes, 6 ugly cases\n\t\t\t#FIRST COLUMN\n\t\t\tif i==0 and j==0:\n\t\t\t\tm = np.copy(v) # reminder: v is matrix of vertex\n\t\t\t\tn = np.copy(v)\n\t\t\t\tm[i,j] = n[i,j] = 0\n\t\t\t\tm[i+1,j] = v[i,j]\n\t\t\t\tn[i,j+1] = v[i,j]\n\t\t\t\tmBoard = Board(m)\n\t\t\t\tnBoard = Board(n)\n\t\t\t\tpQueue.append(mBoard)\n\t\t\t\tpQueue.append(nBoard)\n\t\t\t\tsearchGraph.add_node(mBoard)\n\t\t\t\tsearchGraph.add_node(nBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,mBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,nBoard)\n\t\t\tif i==1 and j==0:\n\t\t\t\tm = np.copy(v)\n\t\t\t\tn = np.copy(v)\n\t\t\t\tm[i,j] = n[i,j] = 0\n\t\t\t\tm[i-1,j] = v[i,j]\n\t\t\t\tn[i,j+1] = v[i,j]\n\t\t\t\tmBoard = Board(m)\n\t\t\t\tnBoard = Board(n)\n\t\t\t\tpQueue.append(mBoard)\n\t\t\t\tpQueue.append(nBoard)\n\t\t\t\tsearchGraph.add_node(mBoard)\n\t\t\t\tsearchGraph.add_node(nBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,mBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,nBoard)\n\t\t\t\n\t\t\t#SECOND COLUMN\n\t\t\tif i==0 and j==1:\n\t\t\t\tm = np.copy(v)\n\t\t\t\tn = np.copy(v)\n\t\t\t\tp = np.copy(v)\n\t\t\t\tm[i,j-1] = v[i,j]\n\t\t\t\tn[i,j+1] = v[i,j]\n\t\t\t\tp[i+1,j] = v[i,j]\n\t\t\t\tmBoard = Board(m)\n\t\t\t\tnBoard = Board(n)\n\t\t\t\tpBoard = Board(p)\n\t\t\t\tpQueue.append(mBoard)\n\t\t\t\tpQueue.append(nBoard)\n\t\t\t\tsearchGraph.add_node(mBoard)\n\t\t\t\tsearchGraph.add_node(nBoard)\n\t\t\t\tsearchGraph.add_node(pBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,mBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,nBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,pBoard)\n\t\t\tif i==1 and j==1:\n\t\t\t\tm = np.copy(v)\n\t\t\t\tn = np.copy(v)\n\t\t\t\tp = np.copy(v)\n\t\t\t\tm[i,j] = n[i,j] = p[i,j] = 0\n\t\t\t\tm[i,j-1] = v[i,j]\n\t\t\t\tn[i,j+1] = v[i,j]\n\t\t\t\tp[i-1,j] = v[i,j]\n\t\t\t\tmBoard = Board(m)\n\t\t\t\tnBoard = Board(n)\n\t\t\t\tpBoard = Board(p)\n\t\t\t\tpQueue.append(mBoard)\n\t\t\t\tpQueue.append(nBoard)\n\t\t\t\tpQueue.append(pBoard)\n\t\t\t\tsearchGraph.add_node(mBoard)\n\t\t\t\tsearchGraph.add_node(nBoard)\n\t\t\t\tsearchGraph.add_node(pBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,mBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,nBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,pBoard)\n\n\t\t\t#THIRD COLUMN\n\t\t\tif i==0 and j==2:\n\t\t\t\tm = np.copy(v)\n\t\t\t\tn = np.copy(v)\n\t\t\t\tm[i,j] = n[i,j] = 0\n\t\t\t\tm[i+1,j] = v[i,j]\n\t\t\t\tn[i,j-1] = v[i,j]\n\t\t\t\tmBoard = Board(m)\n\t\t\t\tnBoard = Board(n)\n\t\t\t\tpQueue.append(mBoard)\n\t\t\t\tpQueue.append(nBoard)\n\t\t\t\tsearchGraph.add_node(mBoard)\n\t\t\t\tsearchGraph.add_node(nBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,mBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,nBoard)\n\t\t\tif i==1 and j==2:\n\t\t\t\tm = np.copy(v)\n\t\t\t\tn = np.copy(v)\n\t\t\t\tm[i,j] = n[i,j] = 0\n\t\t\t\tm[i-1,j] = v[i,j]\n\t\t\t\tn[i,j-1] = v[i,j]\n\t\t\t\tmBoard = Board(m)\n\t\t\t\tnBoard = Board(n)\n\t\t\t\tpQueue.append(mBoard)\n\t\t\t\tpQueue.append(nBoard)\n\t\t\t\tsearchGraph.add_node(mBoard)\n\t\t\t\tsearchGraph.add_node(nBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,mBoard)\n\t\t\t\tsearchGraph.add_edge(vertex,nBoard)\n\n\treturn visited, searchGraph\n\n\n\n\n\n\n\n\n\t\t\t\n\n\n\t\t\t\n\n\n\n \n\n\n\n\n\n\n\n\n\n\n\n",
+			"file": "utilities.py",
+			"file_size": 4086,
+			"file_write_time": 131297798313904660,
+			"settings":
+			{
+				"buffer_size": 4111,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/frederic/Desktop/AI/HW1"
+	],
+	"file_history":
+	[
+		"/home/frederic/Desktop/AI/HW1/__init__.py"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"append",
+			"vertex"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"extend",
+			"v"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "__main__.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 132,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								95,
+								95
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "utilities.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4111,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1304,
+								1304
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 633.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 21.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 214.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Run Tests",
+	"project": "AI-ONE.sublime-project",
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

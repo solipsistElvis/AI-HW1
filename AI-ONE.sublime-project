@@ -1,0 +1,45 @@
+{
+	"build_systems":
+	[
+		{
+			"cmd":
+			[
+				"/home/frederic/anaconda3/envs/AI-ONE/bin/python3",
+				"-u",
+				"$file"
+			],
+			"name": "Run Tests",
+			"working_dir": "."
+		},
+		{
+			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+			"name": "Anaconda Python Builder",
+			"selector": "source.python",
+			"shell_cmd": "\"python\" -u \"$file\""
+		}
+	],
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+
+	"settings":
+	{
+		   
+	/*
+        If you set the following option as true, anaconda will display the
+        signatures of the methods in a floating popup.
+
+        *note*: this only has an effect if "display_signatures" is true.
+    */
+    "enable_signatures_tooltip": false,
+
+    /*
+        If you set the following option as true, anaconda will display the
+        documentation of modules, classes or methods in a floating popup.
+    */
+    "enable_docstrings_tooltip": false,
+	}
+}
